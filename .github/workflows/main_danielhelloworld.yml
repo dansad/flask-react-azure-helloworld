@@ -22,15 +22,26 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Create and start virtual environment
+      - name: Install poetry
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          python -m pip install poetry==1.1.11
       
+      - name: Configure poetry
+        run: |
+          python -m poetry config virtualenvs.in-project true
+
+      - name: Cache the virtualenv
+        uses: actions/cache@v2
+        with:
+          path: ./venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m poetry install
+      
         
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      # Optional: Add steps to run tests here (PyTest, Flasky, reacty test suites, etc.)
       
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
